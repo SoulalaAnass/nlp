@@ -1,41 +1,23 @@
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
-# Initialize the VADER sentiment analyzer with your custom lexicon
 analyzer = SentimentIntensityAnalyzer()
-custom_lexicon_file = "your_custom_lexicon.txt"
 
-# Load your custom lexicon
-with open(custom_lexicon_file, "r", encoding="utf-8") as file:
-    custom_lexicon = {}
-    for line in file:
-        word, score = line.strip().split()
-        custom_lexicon[word] = float(score)
+#Read text from a file
+file_path = 'filteredtext.txt'
+with open(file_path, 'r', encoding='utf-8') as file:
+    text = file.read()
 
-# Update VADER's lexicon with your custom lexicon
-analyzer.lexicon.update(custom_lexicon)
+#Analyze text
+sentiment_scores = analyzer.polarity_scores(text)
 
-# German text to analyze
-german_text = "Das Produkt ist wunderbar und fantastisch."
+#Map the sentiment score to a scale of 1 to -1
+compound_score = sentiment_scores['compound']
 
-# Analyze sentiment
-sentiment_scores = analyzer.polarity_scores(german_text)
-
-# Interpret the sentiment scores
-if sentiment_scores['compound'] >= 0.05:
-    sentiment = "Positive"
-elif sentiment_scores['compound'] <= -0.05:
-    sentiment = "Negative"
+if compound_score > 0:
+    sentiment_mapped = 1
+elif compound_score < 0:
+    sentiment_mapped = -1
 else:
-    sentiment = "Neutral"
+    sentiment_mapped = 0
 
-# Print the sentiment and sentiment scores
-print(f"Sentiment: {sentiment}")
-print(f"Positive Score: {sentiment_scores['pos']:.2f}")
-print(f"Negative Score: {sentiment_scores['neg']:.2f}")
-print(f"Neutral Score: {sentiment_scores['neu']:.2f}")
-print(f"Compound Score: {sentiment_scores['compound']:.2f}")
-
-##underbar 2.0
-# schlecht -1.5
-# fantastisch 2.5
-# nicht gut -1.0###
+print(f"Sentiment (Mapped): {sentiment_mapped}")
